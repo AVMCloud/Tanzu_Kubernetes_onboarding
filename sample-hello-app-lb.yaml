@@ -1,0 +1,32 @@
+#Exposing application using load balancer service
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app-lb-service  #Define name for load balancer service
+spec:
+  type: LoadBalancer  #Service type load balancer
+  ports:
+  - port: 80  #Expose port for service
+    targetPort: 8080  #Corresponding port for Pods
+  selector:
+    app: hello-app-lb #Labels for deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app-lb-deployment #Define name for K8s deployment
+spec:
+  replicas: 3 #Define number of replicas
+  selector:
+    matchLabels:
+      app: hello-app-lb #Labels for deployment
+  template:
+    metadata:
+      labels:
+        app: hello-app-lb #Labels for deployment
+    spec:
+      containers:
+      - name: hello-app-lb-pods #Name of containers in Pods
+        image: docker.io/phozzy/hello-app:latest #Name of container images
+        ports:
+        - containerPort: 8080 #Container exposed ports
